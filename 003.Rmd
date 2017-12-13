@@ -1,0 +1,106 @@
+---
+title: "SMDE_assignment03"
+author: "Asaf Pau"
+date: "December 11, 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Allen-Cuneen approximation's formula
+```{r}
+#C(s=1, theta)
+allenCuneen <- function (lamda, sigma_tau, mu, sigma_x, rho) {
+C_theta = 
+
+}
+```
+
+```{r}
+runningQueue <- function(rho, E_tau, sigma, clients=1000) {
+
+m = (E_tau * rho)/(sqrt(exp(sigma*sigma)))
+mu = log(m)
+
+  
+service_time = rlnorm(clients,mu,sigma)
+inter_arrival = rnorm(clients,77,15) #(t_i) - entrance time instant to the W.S.; it can be obtained through the sequence of interarrival times
+L = 0
+Lq = 0
+W = 0
+Wq = 0
+LT_i = array(0, clients)
+L_i   = array(0, clients)
+W_i= array(0, clients)
+L_q = array(0, clients)
+W_q = array(0, clients)
+t_i = array(0, clients)
+ts_i = array(0, clients)    #(t_i)^S= arrival time instant to the service system
+theta_i = array(0, clients) #Theta_i - exit time instant from W.S. . for client i
+for (c in 1:clients){
+  #step #1
+  if(c == 1)
+    ts_i[c] = max(t_i[c])
+  else
+    ts_i[c] = max(theta_i[c-1], t_i[c])
+  #step #2 - done in the pre-processing phase "service_time"
+  #step #3
+  theta_i[c] = ts_i[c] + service_time[c]
+  #step #4
+  if(c < clients)
+    t_i[c+1] = t_i[c] + inter_arrival[c]
+  #step 5 : calculation and printing
+  #5a
+  L_i[c] = W_i[c] = theta_i[c] - t_i[c]
+  L = L + L_i[c]
+  #TODO: check what about LT_i[1]
+  if (c > 1) 
+    LT_i[c] = L/(t_i[c]-t_i[1])
+  W = W + W_i[c]
+  
+  #5b
+  L_q[c] = W_q[c] = ts_i[c] - t_i[c]
+  Lq = Lq + L_q[c]
+  Wq = Wq + W_q[c]
+  
+}
+  
+W = W/clients
+Wq = Wq/clients
+L = L/(t_i[clients] - t_i[1])
+Lq = Lq/(t_i[clients] - t_i[1])
+
+plot(t_i, LT_i, type="l", xlab="t_i", ylab="LT_i")
+
+}
+
+```
+
+
+
+```{r}
+#main
+
+# logNormal(1.4286)
+sigma = 1.4286
+rho = c(0.4, 0.7 , 0.85, 0.925)
+E_tau = 77
+clients = 100000
+for (p in 1:length(rho)){
+  for(i in 1:1){
+    runningQueue(rho[i], E_tau, sigma,clients)
+  }
+}
+
+```
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
