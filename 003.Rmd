@@ -7,24 +7,40 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+#install.packages("rlist")
+library(rlist)
 ```
-
-## Allen-Cuneen approximation's formula
+## getMu - explained in the lab assignment paper.
+## Allen-Cuneen approximation's formula for G/G/1
+## base on miri-32-eng.pdf slide 7
 ```{r}
+getMu <- function(rho, E_tau, sigma){
+  m = (E_tau * rho)/(sqrt(exp(sigma*sigma)))
+  mu = log(m)
+  return(mu)
+}
+
+C_s_theta <- function (lamda, mu, rho){
+  numerator = (lamda/mu)/(1-rho)
+  denominator = 1 + numerator
+  return(numerator/denominator)
+}
+
 #C(s=1, theta)
 allenCuneen <- function (lamda, sigma_tau, mu, sigma_x, rho) {
-C_theta = 
-
+  C_theta = C_s_theta(lamda, mu, rho)
+  #x to the power of y -> x**y
+  numerator = lamda**2*sigma_tau**2 + mu**2*sigma_x**2
+  numerator = numerator * C_theta
+  denominator = 2 * mu * (1-rho)
+  
+  return(numerator/denominator)
 }
 ```
 
 ```{r}
-runningQueue <- function(rho, E_tau, sigma, clients=1000) {
+runningQueue <- function(mu, sigma, clients=1000) {
 
-m = (E_tau * rho)/(sqrt(exp(sigma*sigma)))
-mu = log(m)
-
-  
 service_time = rlnorm(clients,mu,sigma)
 inter_arrival = rnorm(clients,77,15) #(t_i) - entrance time instant to the W.S.; it can be obtained through the sequence of interarrival times
 L = 0
@@ -72,8 +88,9 @@ Wq = Wq/clients
 L = L/(t_i[clients] - t_i[1])
 Lq = Lq/(t_i[clients] - t_i[1])
 
-plot(t_i, LT_i, type="l", xlab="t_i", ylab="LT_i")
-
+ # plot(t_i, LT_i, type="l", xlab="t_i", ylab="LT_i")
+  res = list("t_i" = t_i, "LT_i" = LT_i, "W" = W, "Wq"= Wq, "L" = L, "Lq" = Lq)
+  res
 }
 
 ```
@@ -83,16 +100,34 @@ plot(t_i, LT_i, type="l", xlab="t_i", ylab="LT_i")
 ```{r}
 #main
 
-# logNormal(1.4286)
 sigma = 1.4286
 rho = c(0.4, 0.7 , 0.85, 0.925)
 E_tau = 77
-clients = 100000
+clients = 200000
+stat = list()
+iterations = 5
 for (p in 1:length(rho)){
-  for(i in 1:1){
-    runningQueue(rho[i], E_tau, sigma,clients)
+  mu = getMu(rho[p], E_tau, sigma)
+  print(mu)
+  for(i in 1:iterations){
+    stat = list.append(stat, runningQueue(mu, sigma,clients))
   }
 }
+
+# stat contain all the return values from running Queue where the indexing is:
+# stat[1-iterations] results for rho[1] and the corrisponding mu
+# stat[iteration+1 - 2*iteration] results for rho[2] and the corrisponding mu
+# stat[2*iteration+1 - 3*iteration] results for rho[3] and the corrisponding mu
+# stat[3*iteration+1 - 4*iteration] results for rho[4] and the corrisponding mu
+
+for (p in 1:length(rho)){
+  for(i in 1:iterations){
+    #need to do better plotting, 
+    #maybe to plot all the iterations at with the same rho and mu on a same graph.
+    plot(stat[i+iterations*(p-1)][[1]]$t_i, stat[i+iterations*(p-1)][[1]]$LT_i, type="l", xlab="t_i", ylab="LT_i")
+  }
+}
+
 
 ```
 ## Including Plots
@@ -100,7 +135,12 @@ for (p in 1:length(rho)){
 You can also embed plots, for example:
 
 ```{r pressure, echo=FALSE}
-plot(pressure)
+
+```
+
+```{r}
+#playground
+
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
