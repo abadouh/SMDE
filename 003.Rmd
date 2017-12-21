@@ -1,14 +1,23 @@
 ---
 title: "SMDE_assignment03"
-author: "Asaf Pau"
+author: "Asaf Badouh, Pau Rodriguez"
 date: "December 11, 2017"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 #install.packages("rlist")
 library(rlist)
+
+sigma = 1.4286
+rho = c(0.4, 0.7 , 0.85, 0.925)
+E_tau = 77
+E_sigma = 15
+
 ```
 ## getMu - explained in the lab assignment paper.
 ## Allen-Cuneen approximation's formula for G/G/1
@@ -39,8 +48,12 @@ allenCuneen <- function (lamda, sigma_tau, mu, sigma_x, rho) {
 ```
 
 ```{r}
-runningQueue <- function(mu, sigma, clients=1000) {
+runningQueue <- function(mu, sigma, clients=1000, myseed = -1) {
 
+  
+if (myseed > -1){
+  set.seed(myseed)
+}
 service_time = rlnorm(clients,mu,sigma)
 inter_arrival = rnorm(clients,77,15) #(t_i) - entrance time instant to the W.S.; it can be obtained through the sequence of interarrival times
 L = 0
@@ -95,22 +108,51 @@ Lq = Lq/(t_i[clients] - t_i[1])
 
 ```
 
+```{r}
+get_X_mu <- function(rho, X_sigma, Tau_mu, Tau_sigma) {
+  
+  x_mu = log(rho*Tau_mu/exp((X_sigma**2)/2))
+  
+  return(x_mu)
+  
+}
+
+part1_2 <- function(rho, X_sigma, Tau_mu, Tau_sigma){
+  
+    x_mu = get_X_mu(rho, X_sigma, Tau_mu, Tau_sigma)
+    
+    C_x = sqrt(exp(X_sigma**2) - 1)
+    
+    C_tau = Tau_sigma/Tau_mu
+    
+    Lq_mm1 = (rho**2)/(1 - rho)
+    
+    Lq_AllenCuneen = Lq_mm1 * (( C_x**2 + C_tau**2 ) /2)
+    
+    lambda = 1/Tau_mu
+    
+    Wq_AllenCuneen = Lq_AllenCuneen/lambda
+    
+    return( c(Lq_AllenCuneen, Wq_AllenCuneen, x_mu))
+    
+}
+
+```
+
+
+
 
 
 ```{r}
-#main
-
-sigma = 1.4286
-rho = c(0.4, 0.7 , 0.85, 0.925)
-E_tau = 77
 clients = 200000
+myseeds = c(7,13,109,211,273,711,777,1001,7001,99)
 stat = list()
 iterations = 5
 for (p in 1:length(rho)){
   mu = getMu(rho[p], E_tau, sigma)
   print(mu)
   for(i in 1:iterations){
-    stat = list.append(stat, runningQueue(mu, sigma,clients))
+    stat = list.append(stat, runningQueue(mu, sigma,clients, myseeds[p %% 10 + 1]))
   }
 }
 
@@ -130,17 +172,316 @@ for (p in 1:length(rho)){
 
 
 ```
-## Including Plots
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
 
-```
+## Initial analysis
 
 ```{r}
-#playground
+
+rho07 = read.table('./part1/rho_0_7/queue-sim-arribades.txt')
+colnames(rho07)
+rho07$V1[3]
+# incomplete!
+```
+
+## Allen Cuneen's aproximation formula for $W_{q}$ and $L_{q}$
+
+For each loading factor $\rho$, we derive the required $\mu$ value for the Lognormal distribution:
+$$
+  s = 1 \\
+  \lambda = { 1 \over E[\tau] } \\
+  \mu = {1 \over E[x]} \\
+  E[x] = m \cdot e^{\sigma^{2} \over 2} = e^{\mu + {\sigma^{2} \over 2} } \\
+  \rho = { \lambda \over {s\mu}} = { E[x] \over E[\tau] } = e^{\mu} \cdot { e^{\sigma^{2} \over 2} \over E[x] } \Rightarrow \mu = ln \left( { \rho \over e^{ \sigma^{2} \over 2 } } \cdot E[\tau]  \right) \\
+$$
+
+We use the Allen Cuneen's aproximation formula for $L_{q}$:
+$$
+  L_{q} \approx L_{q_{M/M/1}} \cdot \left( C_{\tau}^{2} + C_{x}^{2} \over 2  \right) \\
+$$
+With:
+$$
+C_{x} = \sqrt{ \omega - 1} =  \sqrt{ e^{\sigma^{2}} - 1} \\
+C_{\tau} = { \sigma_{\tau} \over E[\tau] }
+$$
+And derive $W_{q}$:
+$$
+  W_{q} = { L_{q} \over \lambda }
+$$
+
+```{r show=FALSE}
+# part 1.2 Allen Cuneen aproximation calculation
+aproximations = rep(c(0,0), 4)
+i = 1
+for (r in rho) {
+  
+  Lq_and_Wq_and_mu = part1_2(r, sigma, E_tau, E_sigma)
+  
+  aproximations[i] = Lq_and_Wq_and_mu[1]
+  aproximations[i+1] = Lq_and_Wq_and_mu[2]
+  aproximations[i+2] = Lq_and_Wq_and_mu[3]
+  i = i + 3
+}
+```
+
+Using the Allen Cuneen's aproximation formula, we can compute the $W_{q}$ and $L_{q}$ for each loading factor:
+
+$\rho$ | $\mu$ | $W_{q}$ | $L_{q}$
+|-------|---------|---------|--------|
+`r rho[1]` | `r aproximations[3]`  | `r aproximations[2]` | `r aproximations[1]` |
+`r rho[2]` | `r aproximations[6]`  | `r aproximations[5]` | `r aproximations[4]` |
+`r rho[3]` | `r aproximations[9]`  | `r aproximations[8]` | `r aproximations[7]` |
+`r rho[4]` |`r aproximations[12]`  | `r aproximations[11]` | `r aproximations[10]` |
+
+
+
+
+
+## Simulation
+
+First, for each $\rho$, we're going to calculate what is the amount of clients needed to get in the steady state of the waiting system.
+
+
+```{r  echo=FALSE}
+# steady state verification
+clients = 100000
+stat = list()
+iterations = 10
+for (p in 1:4){
+  mu = getMu(rho[p], E_tau, sigma)
+  for(i in 1:1){
+    stat = list.append(stat, runningQueue(mu, sigma,clients))
+  }
+}
+
+for (p in 1:4){
+  for(i in 1:1){
+    #need to do better plotting, 
+    #maybe to plot all the iterations at with the same rho and mu on a same graph.
+    plot(stat[[p]]$t_i, stat[[p]]$LT_i, type="l", xlab="t_i", ylab="LT_i")
+    title(paste(" rho = ",rho[p]))
+  }
+}
 
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+We observe that, apart from the simulation with loading factor 0.4, the other simulations have not attained the steady state.
+
+If we repeat the simulations with a number of clients between 200000 and 500000, the steady state is attained with all loading factors. We have not tested more than 500000 clients.
+
+```{r echo=FALSE}
+# steady state verification
+clients = 500000
+stat = list()
+iterations = 10
+myseed = c("771","10101", "960", "1078")
+for (p in 1:4){
+  mu = getMu(rho[p], E_tau, sigma)
+  for(i in 1:1){
+    stat = list.append(stat, runningQueue(mu, sigma,clients))
+  }
+}
+
+for (p in 1:4){
+  for(i in 1:1){
+    #need to do better plotting, 
+    #maybe to plot all the iterations at with the same rho and mu on a same graph.
+    plot(stat[[p]]$t_i, stat[[p]]$LT_i, type="l", xlab="t_i", ylab="LT_i")
+    title(paste(" rho = ",rho[p]))
+  }
+}
+
+```
+
+
+### $\rho$ = `r rho[1]`
+
+We generate 10 simulations with 100000 clients, each with a different seed. For each simulation, we check if the steady state is attained without any abrupt increase or decrease in the value of the average occupancy. In case there's any abrupt increase or decrease, we change the seed. If for many seeds, this phenomena is still happening, we increase the number of clients.
+
+```{r echo=FALSE}
+simulation <- function(clients, iterations, rho, seeds){
+  stat = list()
+  mu = getMu(rho, E_tau, sigma)
+  for(i in 1:iterations){
+    stat = list.append(stat, runningQueue(mu, sigma,clients, seeds[i]))
+  }
+  
+  for(i in 1:iterations){
+    #need to do better plotting, 
+    #maybe to plot all the iterations at with the same rho and mu on a same graph.
+    plot(stat[[i]]$t_i, stat[[i]]$LT_i, type="l", xlab="t_i", ylab="LT_i")
+    title(paste(" rho = ",rho," seed = ",seeds[i]))
+  }
+  
+  
+  return(stat)
+}
+
+clients = 100000
+iterations = 10
+myseed = c(771,10101, 960, 1078,999,51,89,2001,30719,17)
+stat <- simulation(clients,iterations,rho[1], myseeds)
+
+```
+
+We observe that for the seeds  10101, 1078, 960 and 51, there's an abrupt change in the average occupancy. We change those seeds and redo the simulation. 
+
+```{r echo=FALSE}
+
+myseeds = c(771,10102, 963, 1079,999,48,89,2001,30719,17)
+stat <- simulation(clients,iterations,rho[1], myseeds)
+```
+
+
+We changed a total of 4 out of 10 seeds. 
+
+We now compute the confidence interval for $L_{q}$ and $W_{q}$. We will use a t-Student distribution with critical value 1 - 0.95 and 9 degrees of freedom to compute a 95% confidence interval.
+
+$$
+L_{q_{1}},L_{q_{2}},...,L_{q_{10}} \\
+\overline{L}_{q} = {1 \over n}\sum_{i=1}^{n}L_{q_{i}} \\
+S_{L_{q}}^{2} = {1 \over n - 1} \sum_{i=1}^{n} ( L_{q_{i}} - \overline{L}_{q} )^{2} \\
+C.I.(L_{q}) =   \overline{L}_{q} \pm t_{1 - \alpha, n - 1} \cdot \sqrt{S_{L_{q}}^{2} \over n} \\
+$$
+
+$$
+W_{q_{1}},W_{q_{2}},...,W_{q_{10}} \\
+\overline{W}_{q} = {1 \over n}\sum_{i=1}^{n}W_{q_{i}} \\
+S_{W_{q}}^{2} = {1 \over n - 1} \sum_{i=1}^{n} ( W_{q_{i}} - \overline{W}_{q} )^{2} \\
+C.I.(W_{q}) =   \overline{W}_{q} \pm t_{1 - \alpha, n - 1} \cdot \sqrt{S_{W_{q}}^{2} \over n} \\
+$$
+
+
+The computations produce the followings confidence intervals for the average queue length and waiting time:
+
+```{r echo=FALSE}
+
+confidence_interval <- function(x,r) {
+
+  n = length(x)
+  # gather all Lq's and Wq's
+  vLq <- c()
+  vWq <- c()
+  for (i in 1:n){
+    vLq[i] <- x[[i]]$Lq
+    vWq[i] <- x[[i]]$Wq
+  }
+  
+  # compute the mean
+  Lqavg = mean(vLq)
+  Wqavg = mean(vWq)
+  
+  # compute the sample variance
+  
+  Lqs2 = sum((vLq - Lqavg)**2)/(n - 1)
+  Wqs2 = sum((vWq - Wqavg)**2)/(n - 1)
+  
+  # t-student
+  t = qt(0.95,n - 1)
+  
+  # confidence interval
+  CI_Lq = c(Lqavg - t*sqrt(Lqs2/n), Lqavg + t*sqrt(Lqs2/n) )
+  CI_Wq = c(Wqavg - t*sqrt(Wqs2/n), Wqavg + t*sqrt(Wqs2/n) )
+
+  return(data.frame(rho=r,Lq_m=CI_Lq[1], Lq_p=CI_Lq[2], Wq_m=CI_Wq[1], Wq_p=CI_Wq[2] ))  
+}
+
+ci <- data.frame(rho=c(),lq_m=c(),lq_p=c(),wq_m=c(),wq_p=c())
+ci_current <- confidence_interval(stat,rho[1])
+ci <- rbind(ci, setNames(ci_current, names(ci)))
+ci[1,]
+```
+
+
+### $\rho$ = `r rho[2]`
+
+We generate 10 simulations with 100000 clients, each with a different seed. We check if the steady state is attained. We also check for irregularities in the simulation results, in which case we change the random number generator seed and repeat the simulation.
+
+```{r echo=FALSE}
+
+clients = 100000
+iterations = 10
+myseeds = c(771,10101, 960, 1078,999,51,89,2001,30719,17)
+myseeds = c(772,10102, 963, 1078,999,48,89,2001,30718,17)
+stat <- simulation(clients,iterations,rho[2], myseeds)
+
+```
+
+We observe that 5 out of 10 simulations are not in a steady state at the end of the simulation. We increase the number of clients to 500000 and repeat the simulations.
+
+```{r echo=FALSE}
+
+clients = 500000
+iterations = 10
+myseeds = c(772,10102, 963, 1078,999,48,89,2001,30718,17)
+stat <- simulation(clients,iterations,rho[2], myseeds)
+
+```
+
+We now compute the confidence interval for $L_{q}$ and $W_{q}$ using the same procedure we detailed for $\rho =$ `r rho[1]`. We will use a t-Student distribution with critical value 1 - 0.95 and 9 degrees of freedom to compute a 95% confidence interval. The computations produce the followings confidence intervals for the average queue length and waiting time:
+
+```{r echo=FALSE}
+ci_current <- confidence_interval(stat,rho[2])
+ci <- rbind(ci, setNames(ci_current, names(ci)))
+ci[2,]
+```
+
+### $\rho$ = `r rho[3]`
+
+We generate 10 simulations with 100000 clients, each with a different seed. We check if the steady state is attained. We also check for irregularities in the simulation results, in which case we change the random number generator seed and repeat the simulation.
+
+```{r echo=FALSE}
+
+clients = 100000
+iterations = 10
+myseeds = c(771,10101, 960, 1078,999,51,89,2001,30719,17)
+myseeds = c(772,10102, 963, 1078,999,48,89,2001,30718,17)
+stat <- simulation(clients,iterations,rho[3], myseeds)
+
+```
+
+We observe that ... PENDING 
+
+We now compute the confidence interval for $L_{q}$ and $W_{q}$ using the same procedure we detailed for $\rho =$ `r rho[1]`. We will use a t-Student distribution with critical value 1 - 0.95 and 9 degrees of freedom to compute a 95% confidence interval. The computations produce the followings confidence intervals for the average queue length and waiting time:
+
+```{r echo=FALSE}
+ci_current <- confidence_interval(stat,rho[3])
+ci <- rbind(ci, setNames(ci_current, names(ci)))
+ci[3,]
+```
+
+### $\rho$ = `r rho[4]`
+
+We generate 10 simulations with 100000 clients, each with a different seed. We check if the steady state is attained. We also check for irregularities in the simulation results, in which case we change the random number generator seed and repeat the simulation.
+
+```{r echo=FALSE}
+
+clients = 100000
+iterations = 10
+myseeds = c(771,10101, 960, 1078,999,51,89,2001,30719,17)
+myseeds = c(772,10102, 963, 1078,999,48,89,2001,30718,17)
+stat <- simulation(clients,iterations,rho[4], myseeds)
+
+```
+
+We observe that ... PENDING 
+
+We now compute the confidence interval for $L_{q}$ and $W_{q}$ using the same procedure we detailed for $\rho =$ `r rho[1]`. We will use a t-Student distribution with critical value 1 - 0.95 and 9 degrees of freedom to compute a 95% confidence interval. The computations produce the followings confidence intervals for the average queue length and waiting time:
+
+```{r echo=FALSE}
+ci_current <- confidence_interval(stat,rho[4])
+ci <- rbind(ci, setNames(ci_current, names(ci)))
+ci[4,]
+```
+
+## Comparison of Allen Cuneen's approximation and the simulation
+
+$\rho$ | $W_{q}$ | -C.I $W_{q}$ | +C.I $W_{q}$ | $L_{q}$ | -C.I $L_{q}$ | +C.I $L_{q}$ |
+|-------|---------|---------|--------|---|---|---|---|
+`r rho[1]` |  `r aproximations[2]` | `r ci[1,4] ` | `r ci[1,5] ` | `r aproximations[1]` | `r ci[1,2] ` | `r ci[1,3] `
+`r rho[2]` |  `r aproximations[5]` | `r ci[2,4] ` | `r ci[2,5] ` | `r aproximations[4]` | `r ci[2,2] ` | `r ci[2,3] `
+`r rho[3]` | `r aproximations[8]` | `r ci[3,4] ` | `r ci[3,5] ` | `r aproximations[7]` | `r ci[3,2] ` | `r ci[3,3] `
+`r rho[4]` | `r aproximations[11]` | `r ci[4,4] ` | `r ci[4,5] ` | `r aproximations[10]` | `r ci[4,2] ` | `r ci[4,3] `
+
+
