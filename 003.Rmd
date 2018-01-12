@@ -469,7 +469,7 @@ $\rho$  | -C.I $W_{q}$ | +C.I $W_{q}$ | -C.I $L_{q}$ | +C.I $L_{q}$ |
 
 ### Loading factor $\rho$ = `r rho[2]`
 
-We generate 10 simulations with 100000 clients, each with a different seed. We check if the steady state is attained. We also check for irregularities in the simulation results, in which case we change the random number generator seed and repeat the simulation.
+We follow the same procedure to generate 10 simulations with 100000 clients, as we did for the previous $\rho=$, correcting any invalid seeds for the ramdom number generator. The result is that we need to increase the number of clients to 500000 to be sure that the system has arribed to the steady state.
 
 ```{r echo=FALSE}
 
@@ -477,13 +477,14 @@ clients = 100000
 iterations = 10
 myseeds = c(771,10101, 960, 1078,999,51,89,2001,30719,17)
 myseeds = c(772,10102, 963, 1078,999,48,89,2001,30718,17)
-stat <- simulation(clients,iterations,rho[2], myseeds)
+#stat <- simulation(clients,iterations,rho[2], myseeds)
 
 ```
 
-We observe that 5 out of 10 simulations are not in a steady state at the end of the simulation. We increase the number of clients to 500000 and repeat the simulations.
 
 ```{r echo=FALSE}
+#We observe that 5 out of 10 simulations are not in a steady state at the end of the simulation. We increase the number of clients to 500000 and repeat the simulations.
+
 
 clients = 500000
 iterations = 10
@@ -492,7 +493,7 @@ stat <- simulation(clients,iterations,rho[2], myseeds)
 
 ```
 
-We now compute the confidence interval for $L_{q}$ and $W_{q}$ using the same procedure we detailed for $\rho =$ `r rho[2]`. We will use a t-Student distribution with critical value 1 - 0.95 and 9 degrees of freedom to compute a 95% confidence interval. The computations produce the followings confidence intervals for the average queue length and waiting time:
+We now compute the confidence interval for $L_{q}$ and $W_{q}$ using the same procedure we detailed for $\rho =$ `r rho[2]`. The computations produce the followings confidence intervals for the average queue length and waiting time:
 
 ```{r echo=FALSE}
 ci_current <- confidence_interval(stat,rho[2])
@@ -513,11 +514,11 @@ clients = 100000
 iterations = 10
 myseeds = c(771,10101, 960, 1078,999,51,89,2001,30719,17)
 myseeds = c(772,10102, 963, 1078,999,48,89,2001,30718,17)
-stat <- simulation(clients,iterations,rho[3], myseeds)
-
+#stat <- simulation(clients,iterations,rho[3], myseeds)
+#We observe that seeds 963, 1078, 48 and 2001 produce irregularities in the simulation, therefore we have to change them and repeat the simulation.
 ```
 
-We observe that seeds 963, 1078, 48 and 2001 produce irregularities in the simulation, therefore we have to change them and repeat the simulation.
+
 
 ```{r echo=FALSE}
 
@@ -530,7 +531,7 @@ stat <- simulation(clients,iterations,rho[3], myseeds)
 
 ```
 
-We now compute the confidence interval for $L_{q}$ and $W_{q}$ using the same procedure we detailed for $\rho =$ `r rho[3]`. We will use a t-Student distribution with critical value 1 - 0.95 and 9 degrees of freedom to compute a 95% confidence interval. The computations produce the followings confidence intervals for the average queue length and waiting time:
+We now compute the confidence interval for $L_{q}$ and $W_{q}$ using the same procedure we detailed for $\rho =$ `r rho[3]`. The computations produce the followings confidence intervals for the average queue length and waiting time:
 
 ```{r echo=FALSE}
 ci_current <- confidence_interval(stat,rho[3])
@@ -557,7 +558,7 @@ stat <- simulation(clients,iterations,rho[4], myseeds)
 
 ```
 
-We now compute the confidence interval for $L_{q}$ and $W_{q}$ using the same procedure we detailed for $\rho =$ `r rho[4]`. We will use a t-Student distribution with critical value 1 - 0.95 and 9 degrees of freedom to compute a 95% confidence interval. The computations produce the followings confidence intervals for the average queue length and waiting time:
+We now compute the confidence interval for $L_{q}$ and $W_{q}$ using the same procedure we detailed for $\rho =$ `r rho[4]`. The computations produce the followings confidence intervals for the average queue length and waiting time:
 
 ```{r echo=FALSE}
 ci_current <- confidence_interval(stat,rho[4])
