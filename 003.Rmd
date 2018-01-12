@@ -1,26 +1,32 @@
 ---
-title: "SMDE_assignment03"
+title: "SMDE - Assignment 03"
 author: "Asaf Badouh, Pau Rodriguez"
-date: "December 11, 2017"
+date: "January 12, 2018"
 output:
-  pdf_document: default
-  html_document:
-    df_print: paged
+  pdf_document:
+    keep_tex: true
+
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 #install.packages("rlist")
 library(rlist)
+knitr::opts_chunk$set(cache=TRUE)
 
+
+
+```
+
+
+```{r echo=FALSE}
+# Distribution attributes
 sigma = 1.4286
 rho = c(0.4, 0.7 , 0.85, 0.925)
 E_tau = 77
 E_sigma = 15
 
-```
 
-```{r echo=FALSE}
 # getMu - explained in the lab assignment paper.
 # Allen-Cuneen approximation's formula for G/G/1
 # base on miri-32-eng.pdf slide 7
@@ -183,6 +189,7 @@ simulation.test <- function (){
 
 
 
+
 ## Initial analysis
 
 We execute a small simulation with 10.000 clients to verify that the simulation is running correctly. 
@@ -202,7 +209,7 @@ Wqi = stat[[1]]$"W_q"
 
 
 The histogram of the service times is shown below:
-```{r echo=FALSE}
+```{r echo=FALSE,out.width = "50%", fig.align='center'}
 hist(Wi - Wqi, breaks=40) 
 ```
 
@@ -420,8 +427,8 @@ The computations produce the followings confidence intervals for the average que
 
 ```{r echo=FALSE}
 
-- function(x,r) {
-confidence_interval <
+confidence_interval <- function(x,r) {
+
   n = length(x)
   # gather all Lq's and Wq's
   vLq <- c()
@@ -588,6 +595,9 @@ Causes to the difference between aproximation and simulation:
   1. Our model is not so close to a heavy tail distribution, so the correction factor is not accurate in the Allen Cuneen's formula.
   2. We cannot use the Allen Cuneen's approximation formula with our model. We need to use the Kôllerstrôm formula, as our system is in "heavy traffic" conditions (it is a heavy tail distribution and that means heavy traffic?)
   3. Something related to Ctau and Cx given that arrivals is a Normal distr. and service times is lognormal?
+
+
+
 
 ```{r echo=FALSE}
 
