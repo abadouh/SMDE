@@ -400,7 +400,7 @@ We observe that for the seeds  10101, 1078, 960 and 51, there's an abrupt change
 
 ```{r echo=FALSE}
 
-myseeds = c(771,10102, 963, 1079,999,48,89,2001,30719,17)
+myseeds = c(883,10102, 963, 1079,999,48,89,2001,30719,17)
 stat <- simulation(clients,iterations,rho[1], myseeds)
 ```
 
@@ -478,7 +478,7 @@ We follow the same procedure to generate 10 simulations with 100000 clients, as 
 clients = 100000
 iterations = 10
 myseeds = c(771,10101, 960, 1078,999,51,89,2001,30719,17)
-myseeds = c(772,10102, 963, 1078,999,48,89,2001,30718,17)
+myseeds = c(883,10102, 963, 1078,999,48,89,2001,30718,17)
 #stat <- simulation(clients,iterations,rho[2], myseeds)
 
 ```
@@ -490,7 +490,7 @@ myseeds = c(772,10102, 963, 1078,999,48,89,2001,30718,17)
 
 clients = 500000
 iterations = 10
-myseeds = c(772,10102, 963, 1078,999,48,89,2001,30718,17)
+myseeds = c(883,10102, 963, 1078,999,48,89,2001,30718,17)
 stat <- simulation(clients,iterations,rho[2], myseeds)
 
 ```
@@ -515,7 +515,7 @@ We generate 10 simulations with 100000 clients, each with a different seed. We c
 clients = 100000
 iterations = 10
 myseeds = c(771,10101, 960, 1078,999,51,89,2001,30719,17)
-myseeds = c(772,10102, 963, 1078,999,48,89,2001,30718,17)
+myseeds = c(775,10102, 963, 1078,999,48,89,2001,30718,17)
 #stat <- simulation(clients,iterations,rho[3], myseeds)
 #We observe that seeds 963, 1078, 48 and 2001 produce irregularities in the simulation, therefore we have to change them and repeat the simulation.
 ```
@@ -529,7 +529,7 @@ iterations = 10
 #myseeds = c(771,10101, 960, 1078,999,51,89,2001,30719,17)
 #myseeds = c(772,10102, 963, 1078,999,48,89,2001,30718,17)
 myseeds = c(772,10102, 970, 1151,999,55,89,3001,30718,17)
-myseeds = c(775,10103, 931, 1151,999,55,89,3001,9718,387)
+myseeds = c(883,10103, 931, 1151,999,55,89,3001,9718,317)
 stat <- simulation(clients,iterations,rho[3], myseeds)
 
 ```
@@ -557,7 +557,7 @@ iterations = 10
 myseeds = c(771,10101, 960, 1078,999,51,89,2001,30719,17)
 myseeds = c(772,10102, 963, 1078,999,48,89,2001,30718,17)
 myseeds = c(772,10102, 970, 1151,999,55,89,3001,30718,17)
-myseeds = c(772,10102, 972, 1151,999,55,89,3001,20718,187)
+myseeds = c(887,10102, 972, 1151,979,55,89,3001,20718,1287)
 stat <- simulation(clients,iterations,rho[4], myseeds)
 
 ```
@@ -584,7 +584,24 @@ $\rho$ | $W_{q}$ | -C.I $W_{q}$ | +C.I $W_{q}$ | $L_{q}$ | -C.I $L_{q}$ | +C.I $
 `r rho[3]` | `r aproximations[8]` | `r ci[3,4] ` | `r ci[3,5] ` | `r aproximations[7]` | `r ci[3,2] ` | `r ci[3,3] `
 `r rho[4]` | `r aproximations[11]` | `r ci[4,4] ` | `r ci[4,5] ` | `r aproximations[10]` | `r ci[4,2] ` | `r ci[4,3] `
 
-As we can see in the table above Allen-Cuneen's approximation values for all loading factors are outside of the confidence interval of our simulations, always above. Overall, the approximations of both, $W_q$ and $L_{q}$, are not very far from the simulation's confidence interval.
+As we can see in the table above Allen-Cuneen's approximation values for all loading factors are outside of the confidence interval of our simulations, always above. Overall, the approximations of both, $W_q$ and $L_{q}$, are not very far from the simulation's confidence interval. The Allen-Cuneen's aproximation is a said to be a good aproximation, usually with 5% error or less. If we compute it, in those simulations the error of the Allen-Cuneen's aproximation is 
+```{r echo=FALSE}
+ac.error <- c(0,0,0,0)
+
+ac.error[1] <- ((ci[1,4]+ci[1,5])/2 - aproximations[2] )/ aproximations[2] * 100
+ac.error[2] <- ( (ci[2,4]+ci[2,5])/2 - aproximations[5] )/ aproximations[5] * 100
+ac.error[3] <- ( (ci[3,4]+ci[3,5])/2 - aproximations[8] )/ aproximations[8] * 100
+ac.error[4] <- ( (ci[4,4]+ci[4,5])/2- aproximations[11] )/ aproximations[11] * 100
+ac.error
+
+ac.error[1] <- (ci[1,5] - aproximations[2] )/ aproximations[2] * 100
+ac.error[2] <- ((ci[2,5]) - aproximations[5] )/ aproximations[5] * 100
+ac.error[3] <- ((ci[3,5]) - aproximations[8] )/ aproximations[8] * 100
+ac.error[4] <- ((ci[4,5])- aproximations[11] )/ aproximations[11] * 100
+ac.error
+
+
+```
 
 So the Allen-Cuneen's aproximation models a system where the occupancy is higher and the waiting times in the queue are also greater than what our simulation produces. How can we explain that?
 
