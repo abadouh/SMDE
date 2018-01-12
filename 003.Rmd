@@ -216,7 +216,7 @@ Wqi = stat[[1]]$"W_q"
 
 The histogram of the service times is shown below:
 ```{r echo=FALSE,out.width = "50%", fig.align='center'}
-hist(Wi - Wqi, breaks=20) 
+hist(Wi - Wqi, breaks=700, probability=TRUE) 
 ```
 
 ```{r echo=FALSE}
