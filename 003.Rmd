@@ -219,11 +219,7 @@ The histogram of the service times is shown below:
 hist(Wi - Wqi, breaks=700, probability=TRUE) 
 ```
 
-If we compare with the histogram of a lognormal generated from R:
-```{r echo=FALSE,out.width = "50%", fig.align='center'}
-trl = rlnorm(10000,getMu(rho[1], E_tau, sigma),sigma)
-hist(trl, breaks=700, probability=TRUE) 
-```
+We can clearly observe that the service times follow a heavy-tailed distribution, as more than 75% of the histogram bins have few samples and they are all consecutively placed until the end of it.
 
 ```{r echo=FALSE}
 # mean
@@ -528,11 +524,12 @@ myseeds = c(772,10102, 963, 1078,999,48,89,2001,30718,17)
 
 ```{r echo=FALSE}
 
-clients = 100000
+clients = 400000
 iterations = 10
-myseeds = c(771,10101, 960, 1078,999,51,89,2001,30719,17)
-myseeds = c(772,10102, 963, 1078,999,48,89,2001,30718,17)
+#myseeds = c(771,10101, 960, 1078,999,51,89,2001,30719,17)
+#myseeds = c(772,10102, 963, 1078,999,48,89,2001,30718,17)
 myseeds = c(772,10102, 970, 1151,999,55,89,3001,30718,17)
+myseeds = c(775,10103, 931, 1151,999,55,89,3001,9718,387)
 stat <- simulation(clients,iterations,rho[3], myseeds)
 
 ```
@@ -555,11 +552,12 @@ We generate 10 simulations with 100000 clients, each with a different seed. We c
 
 ```{r echo=FALSE}
 
-clients = 100000
+clients = 500000
 iterations = 10
 myseeds = c(771,10101, 960, 1078,999,51,89,2001,30719,17)
 myseeds = c(772,10102, 963, 1078,999,48,89,2001,30718,17)
 myseeds = c(772,10102, 970, 1151,999,55,89,3001,30718,17)
+myseeds = c(772,10102, 972, 1151,999,55,89,3001,20718,187)
 stat <- simulation(clients,iterations,rho[4], myseeds)
 
 ```
