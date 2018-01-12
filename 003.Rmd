@@ -219,6 +219,12 @@ The histogram of the service times is shown below:
 hist(Wi - Wqi, breaks=700, probability=TRUE) 
 ```
 
+If we compare with the histogram of a lognormal generated from R:
+```{r echo=FALSE,out.width = "50%", fig.align='center'}
+trl = rlnorm(10000,getMu(rho[1], E_tau, sigma),sigma)
+hist(trl, breaks=700, probability=TRUE) 
+```
+
 ```{r echo=FALSE}
 # mean
 ws_mean = mean(Wi - Wqi)
