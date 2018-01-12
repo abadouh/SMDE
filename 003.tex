@@ -118,17 +118,21 @@ The histogram of the service times is shown below:
 
 \begin{center}\includegraphics[width=0.5\linewidth]{003_files/figure-latex/unnamed-chunk-6-1} \end{center}
 
+We can clearly observe that the service times follow a heavy-tailed
+distribution, as more than 75\% of the histogram bins have few samples
+and they are all consecutively placed until the end of it.
+
 The mean and sample variance of the services times are the following:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Mean of the service times: \(W_{s_{avg}}\)=30.7419414
+  Mean of the service times: \(W_{s_{avg}}\)=30.4132959
 \item
-  Standard deviation of the service times: \(W_{s_{std}}\)=110.3301414
+  Standard deviation of the service times: \(W_{s_{std}}\)=77.5293542
 \item
-  Coeficient of variation: \(C_{x}={ \sigma_{x} \over E[x] }\)=3.5889126
+  Coeficient of variation: \(C_{x}={ \sigma_{x} \over E[x] }\)=2.5491928
 \end{enumerate}
 
 The Theoretical values for a Lognormal with \(\mu\)=2.4070657 and
@@ -300,25 +304,11 @@ average queue length and waiting time:
 \subsubsection{\texorpdfstring{Loading factor \(\rho\) =
 0.7}{Loading factor \textbackslash{}rho = 0.7}}\label{loading-factor-rho-0.7}
 
-We generate 10 simulations with 100000 clients, each with a different
-seed. We check if the steady state is attained. We also check for
-irregularities in the simulation results, in which case we change the
-random number generator seed and repeat the simulation.
-
-\includegraphics{003_files/figure-latex/unnamed-chunk-16-1.pdf}
-\includegraphics{003_files/figure-latex/unnamed-chunk-16-2.pdf}
-\includegraphics{003_files/figure-latex/unnamed-chunk-16-3.pdf}
-\includegraphics{003_files/figure-latex/unnamed-chunk-16-4.pdf}
-\includegraphics{003_files/figure-latex/unnamed-chunk-16-5.pdf}
-\includegraphics{003_files/figure-latex/unnamed-chunk-16-6.pdf}
-\includegraphics{003_files/figure-latex/unnamed-chunk-16-7.pdf}
-\includegraphics{003_files/figure-latex/unnamed-chunk-16-8.pdf}
-\includegraphics{003_files/figure-latex/unnamed-chunk-16-9.pdf}
-\includegraphics{003_files/figure-latex/unnamed-chunk-16-10.pdf}
-
-We observe that 5 out of 10 simulations are not in a steady state at the
-end of the simulation. We increase the number of clients to 500000 and
-repeat the simulations.
+We follow the same procedure to generate 10 simulations with 100000
+clients, as we did for the previous \(\rho=\), correcting any invalid
+seeds for the ramdom number generator. The result is that we need to
+increase the number of clients to 500000 to be sure that the system has
+arribed to the steady state.
 
 \includegraphics{003_files/figure-latex/unnamed-chunk-17-1.pdf}
 \includegraphics{003_files/figure-latex/unnamed-chunk-17-2.pdf}
@@ -332,11 +322,9 @@ repeat the simulations.
 \includegraphics{003_files/figure-latex/unnamed-chunk-17-10.pdf}
 
 We now compute the confidence interval for \(L_{q}\) and \(W_{q}\) using
-the same procedure we detailed for \(\rho =\) 0.7. We will use a
-t-Student distribution with critical value 1 - 0.95 and 9 degrees of
-freedom to compute a 95\% confidence interval. The computations produce
-the followings confidence intervals for the average queue length and
-waiting time:
+the same procedure we detailed for \(\rho =\) 0.7. The computations
+produce the followings confidence intervals for the average queue length
+and waiting time:
 
 \begin{longtable}[]{@{}llllll@{}}
 \toprule
@@ -356,21 +344,6 @@ seed. We check if the steady state is attained. We also check for
 irregularities in the simulation results, in which case we change the
 random number generator seed and repeat the simulation.
 
-\includegraphics{003_files/figure-latex/unnamed-chunk-19-1.pdf}
-\includegraphics{003_files/figure-latex/unnamed-chunk-19-2.pdf}
-\includegraphics{003_files/figure-latex/unnamed-chunk-19-3.pdf}
-\includegraphics{003_files/figure-latex/unnamed-chunk-19-4.pdf}
-\includegraphics{003_files/figure-latex/unnamed-chunk-19-5.pdf}
-\includegraphics{003_files/figure-latex/unnamed-chunk-19-6.pdf}
-\includegraphics{003_files/figure-latex/unnamed-chunk-19-7.pdf}
-\includegraphics{003_files/figure-latex/unnamed-chunk-19-8.pdf}
-\includegraphics{003_files/figure-latex/unnamed-chunk-19-9.pdf}
-\includegraphics{003_files/figure-latex/unnamed-chunk-19-10.pdf}
-
-We observe that seeds 963, 1078, 48 and 2001 produce irregularities in
-the simulation, therefore we have to change them and repeat the
-simulation.
-
 \includegraphics{003_files/figure-latex/unnamed-chunk-20-1.pdf}
 \includegraphics{003_files/figure-latex/unnamed-chunk-20-2.pdf}
 \includegraphics{003_files/figure-latex/unnamed-chunk-20-3.pdf}
@@ -383,11 +356,9 @@ simulation.
 \includegraphics{003_files/figure-latex/unnamed-chunk-20-10.pdf}
 
 We now compute the confidence interval for \(L_{q}\) and \(W_{q}\) using
-the same procedure we detailed for \(\rho =\) 0.85. We will use a
-t-Student distribution with critical value 1 - 0.95 and 9 degrees of
-freedom to compute a 95\% confidence interval. The computations produce
-the followings confidence intervals for the average queue length and
-waiting time:
+the same procedure we detailed for \(\rho =\) 0.85. The computations
+produce the followings confidence intervals for the average queue length
+and waiting time:
 
 \begin{longtable}[]{@{}llllll@{}}
 \toprule
@@ -395,8 +366,8 @@ waiting time:
 \(L_{q}\) &\tabularnewline
 \midrule
 \endhead
-0.85 & 13.5934229 & 15.0731043 & 1046.5794927 &
-1160.0665074\tabularnewline
+0.85 & 14.2854646 & 16.016791 & 1099.7052017 &
+1232.9696842\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -420,11 +391,9 @@ random number generator seed and repeat the simulation.
 \includegraphics{003_files/figure-latex/unnamed-chunk-22-10.pdf}
 
 We now compute the confidence interval for \(L_{q}\) and \(W_{q}\) using
-the same procedure we detailed for \(\rho =\) 0.925. We will use a
-t-Student distribution with critical value 1 - 0.95 and 9 degrees of
-freedom to compute a 95\% confidence interval. The computations produce
-the followings confidence intervals for the average queue length and
-waiting time:
+the same procedure we detailed for \(\rho =\) 0.925. The computations
+produce the followings confidence intervals for the average queue length
+and waiting time:
 
 \begin{longtable}[]{@{}llllll@{}}
 \toprule
@@ -432,8 +401,8 @@ waiting time:
 \(L_{q}\) &\tabularnewline
 \midrule
 \endhead
-0.925 & 30.8481543 & 34.8003273 & 2375.1731581 &
-2678.1414924\tabularnewline
+0.925 & 33.0165379 & 37.5147854 & 2542.0094174 &
+2889.0200971\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -450,10 +419,10 @@ simulation}\label{comparison-of-allen-cuneens-approximation-and-the-simulation}
 0.7216626\tabularnewline
 0.7 & 423.5486306 & 379.3389492 & 412.4915102 & 5.5006316 & 4.9266678 &
 5.3560657\tabularnewline
-0.85 & 1249.0362678 & 1046.5794927 & 1160.0665074 & 16.2212502 &
-13.5934229 & 15.0731043\tabularnewline
-0.925 & 2958.3575269 & 2375.1731581 & 2678.1414924 & 38.4202276 &
-30.8481543 & 34.8003273\tabularnewline
+0.85 & 1249.0362678 & 1099.7052017 & 1232.9696842 & 16.2212502 &
+14.2854646 & 16.016791\tabularnewline
+0.925 & 2958.3575269 & 2542.0094174 & 2889.0200971 & 38.4202276 &
+33.0165379 & 37.5147854\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -461,11 +430,9 @@ As we can see in the table above Allen-Cuneen's approximation values for
 all loading factors are outside of the confidence interval of our
 simulations, always above. Overall, the approximations of both, \(W_q\)
 and \(L_{q}\), are not very far from the simulation's confidence
-interval.
-
-So the Allen-Cuneen's aproximation models a system where the occupancy
-is higher and the waiting times in the queue are also greater than what
-our simulation produces. How can we explain that?
+interval. So the Allen-Cuneen's aproximation models a system where the
+occupancy is higher and the waiting times in the queue are also greater
+than what our simulation produces. How can we explain that?
 
 First of all, our random number generator has not been tested. As
 discussed in class, it is impossible to generate real randomness, so
@@ -477,25 +444,42 @@ the seed from time to time in order to avoid irregularities or abrupt
 changes. We can conclude that we need to test the rng for appropriate
 period, given that we need around 200.000 samples in each simulation.
 
-Secondly, the Allen Cuneen's approximation uses the exact values for
-exponential models and a correction factor for our model. Causes to the
-difference between aproximation and simulation:
+Secondly, the Allen Cuneen's approximation uses the exact formula for
+exponential models plus a correction factor. This correction factor may
+not be accurate for the case. However, the Allen-Cuneen's aproximation
+is said to be a good aproximation, usually with 5\% error or less. If we
+compute the error of the Allen-Cuneen's aproximation formula in respect
+to the mean of the confidence interval it is a bit greater than 5\%, but
+close to it, except for the first loading factor \(\rho=0.4\). If we
+compute the error of the aproximation formular in resptect to the upper
+bound of the confidence interval it is less than 5\% except for the
+first loading factor \(\rho=0.4\) (where it is bigger).
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  Our model is not so close to a heavy tail distribution, so the
-  correction factor is not accurate in the Allen Cuneen's formula.
-\item
-  We cannot use the Allen Cuneen's approximation formula with our model.
-  We need to use the Kôllerstrôm formula, as our system is in ``heavy
-  traffic'' conditions (it is a heavy tail distribution and that means
-  heavy traffic?)
-\item
-  Something related to Ctau and Cx given that arrivals is a Normal
-  distr. and service times is lognormal?
-\end{enumerate}
+\begin{longtable}[]{@{}lllll@{}}
+\toprule
+& \(\rho=0.4\) & \(\rho=0.7\) & \(\rho=0.85\) &
+\(\rho=0.925\)\tabularnewline
+\midrule
+\endhead
+Error to the mean of the C.I. & -23\% & -7\% & -7\% &
+-8\%\tabularnewline
+Error to the upper bound of the C.I. & -20\% & -3\% & -1\% &
+-2\%\tabularnewline
+\bottomrule
+\end{longtable}
+
+Given that last comparison of relative errors, the aproximation seems
+correct except for the first \(\rho=0.4\), where the error is too big to
+be neglected. This may be caused by a Coefficient of deviation \(C_{x}\)
+and a \(\sigma_{x}\) that are small, and that can affect significantly
+the behaviour of the system, reducing the average occupancy. We see that
+the expected value of the service times is close to 30 and that the
+standard deviation is \(\sigma=1.4286\) so it can be considered small in
+comparison with the expected value.
+
+Finally, we may say that the last \(\rho=0.925\) could be high enough
+that the theorem for ``heavy traffic'' conditions, the Köllerström
+theorem, could be a better aproximation. It turns out this is not true.
 
 \begin{longtable}[]{@{}llllllll@{}}
 \toprule
@@ -503,19 +487,15 @@ difference between aproximation and simulation:
 -C.I \(L_{q}\) & +C.I \(L_{q}\) &\tabularnewline
 \midrule
 \endhead
-0.4 & 0.8336202 & 51.0353731 & 55.5687961 & 2.8977492 & 0.6629266 &
-0.7216626\tabularnewline
-0.7 & 1.6672404 & 379.3389492 & 412.4915102 & 17.6182641 & 4.9266678 &
-5.3560657\tabularnewline
-0.85 & 3.3344807 & 1046.5794927 & 1160.0665074 & 51.8958797 & 13.5934229
-& 15.0731043\tabularnewline
-0.925 & 6.6689615 & 2375.1731581 & 2678.1414924 & 122.8694038 &
-30.8481543 & 34.8003273\tabularnewline
+0.925 & 6.6689615 & 2542.0094174 & 2889.0200971 & 122.8694038 &
+33.0165379 & 37.5147854\tabularnewline
 \bottomrule
 \end{longtable}
 
-We can observe that Köllerström formula does not apply to this
-situation. We conclude that we are not in heavy traffic conditions.
+If we compute it, we can clearly see that it is a worse aproximation
+than Allen Cuneen's formula. The reason is that 0.925 is not a close
+value to 1, as is the requirement to consider a ``heavy loaded''
+queueing system.
 
 
 \end{document}
